@@ -40,6 +40,7 @@ variable "subnet_ids" {
 
 variable "tags" {
   description = "Tags to apply"
+
   default = {
     Name = "es-cleanup"
   }

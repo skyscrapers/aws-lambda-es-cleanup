@@ -4,16 +4,21 @@ data "archive_file" "es_cleanup_lambda" {
   output_path = "${path.module}/es-cleanup.zip"
 }
 
+locals {
+  # Make file path relative
+  filename = "${substr(data.archive_file.es_cleanup_lambda.output_path, length(path.cwd) + 1, -1)}"
+}
+
 resource "aws_lambda_function" "es_cleanup_vpc" {
   count            = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  filename         = "${path.module}/es-cleanup.zip"
+  filename         = "${local.filename}"
   function_name    = "${var.prefix}es-cleanup"
   description      = "${var.prefix}es-cleanup"
   timeout          = 300
   runtime          = "python${var.python_version}"
   role             = "${aws_iam_role.role.arn}"
   handler          = "es-cleanup.lambda_handler"
-  source_code_hash = "${data.archive_file.es_cleanup_lambda.output_base64sha256}"
+  source_code_hash = "${base64sha256(file("${local.filename}"))}"
 
   environment {
     variables = {
@@ -29,6 +34,7 @@ resource "aws_lambda_function" "es_cleanup_vpc" {
             var.tags,
             map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
             )}"
+
   # This will be a code block with empty lists if we don't create a securitygroup and the subnet_ids are empty.
   # When these lists are empty it will deploy the lambda without VPC support.
   vpc_config {
@@ -37,18 +43,16 @@ resource "aws_lambda_function" "es_cleanup_vpc" {
   }
 }
 
-
-
 resource "aws_lambda_function" "es_cleanup" {
   count            = "${length(var.subnet_ids) == 0 ? 1 : 0}"
-  filename         = "${path.module}/es-cleanup.zip"
+  filename         = "${local.filename}"
   function_name    = "${var.prefix}es-cleanup"
   description      = "${var.prefix}es-cleanup"
   timeout          = 300
   runtime          = "python${var.python_version}"
   role             = "${aws_iam_role.role.arn}"
   handler          = "es-cleanup.lambda_handler"
-  source_code_hash = "${data.archive_file.es_cleanup_lambda.output_base64sha256}"
+  source_code_hash = "${base64sha256(file("${local.filename}"))}"
 
   environment {
     variables = {
