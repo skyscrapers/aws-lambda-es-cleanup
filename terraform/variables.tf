@@ -1,8 +1,14 @@
-variable "prefix" {  default = "" }
+variable "prefix" {
+  default = ""
+}
 
-variable "schedule" { default = "cron(0 3 * * ? *)" }
+variable "schedule" {
+  default = "cron(0 3 * * ? *)"
+}
 
-variable "sns_alert" { default = "" }
+variable "sns_alert" {
+  default = ""
+}
 
 variable "es_endpoint" {}
 
@@ -12,4 +18,10 @@ variable "delete_after" {}
 
 variable "index_format" {}
 
-variable "python_version" { default = "2.7" }
+variable "python_version" {
+  default = "2.7"
+}
+
+variable "lambda_logs_retention_in_days" {
+  default = 30
+}

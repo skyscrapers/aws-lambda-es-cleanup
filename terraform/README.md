@@ -29,6 +29,8 @@ instances of this stack for different environments and regions.
 * `python_version` - Python version to be used. Defaults to 2.7
 Default is once a day at 03:00 GMT.
 See: http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
+* `lambda_logs_retention_in_days` - How many days should the logs of the lambda 
+function be kept. Default is 30 days.
 
 ## Usage
 
