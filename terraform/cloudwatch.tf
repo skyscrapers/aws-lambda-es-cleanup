@@ -17,3 +17,9 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.schedule.arn}"
 }
+
+resource "aws_cloudwatch_log_group" "lambda" {
+  name = "/aws/lambda/${var.prefix}es-cleanup"
+
+  retention_in_days = "${var.lambda_logs_retention_in_days}"
+}
